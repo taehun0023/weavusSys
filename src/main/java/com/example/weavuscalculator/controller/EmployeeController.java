@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://vwcvd4.csb.app/")
 public class EmployeeController {
 
     private final EmployeeRepository employeeRepository;
@@ -28,16 +27,16 @@ public class EmployeeController {
 
     @PostMapping
     public String addEmployee(@RequestBody Employee employee) {
-        if(!employeeService.save(employee)){
+        if(employeeService.save(employee)){
             return "회원등록이 완료되었습니다.";
         }
         return "다시 한번 입력해 주세요.";
     }
 
     @GetMapping("/{id}/accrual")
-            public String getAccrual(@PathVariable String id) {
+            public Accrual getAccrual(@PathVariable String id) {
         Accrual accrual = accrualService.findByEmployeeId(id).orElseThrow();
-        String result = String.valueOf(accrualService.calculateTotalAccrual(accrual));
-        return result;
+        accrualService.calculateTotalAccrual(accrual);
+        return accrual;
     }
 }

@@ -1,8 +1,10 @@
 package com.example.weavuscalculator.service;
 
 import com.example.weavuscalculator.entity.Accrual;
+import com.example.weavuscalculator.entity.Amount;
 import com.example.weavuscalculator.entity.Employee;
 import com.example.weavuscalculator.repo.AccrualRepository;
+import com.example.weavuscalculator.repo.SettingsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,10 @@ import java.util.Optional;
 public class AccrualService {
 
     private final AccrualRepository accrualRepository;
+    private final SettingsRepository settingsRepository;
 
-
-    public int calculateTotalAccrual(Accrual accrual) {
+    public Long calculateTotalAccrual(Accrual accrual) {
+        Amount setPrice = settingsRepository.findById(1);
         YearMonth startMonth = YearMonth.from(accrual.getStartDate());
         LocalDate endDate = accrual.getEndDate() != null ? accrual.getEndDate() : LocalDate.now();
         YearMonth endMonth = YearMonth.from(endDate);
@@ -33,7 +36,7 @@ public class AccrualService {
             months += 1; // 종료일이 1일일 때, 그 달을 추가
         }
 
-        int result = (int) months * 5000;
+        long result = months * setPrice.getMonthlyAmount();
         accrual.setTotalAmount(result);
         accrualRepository.save(accrual);
         return result;
@@ -48,10 +51,7 @@ public class AccrualService {
         List<Accrual> accrualList = accrualRepository.findAll();
         for (Accrual accrual : accrualList ){
             if (!accrual.getEmployee().getEmployeeType().equals(Employee.EmployeeType.CONTRACT)){
-//                if (accrual.getTotalAmount() == null || accrual.getTotalAmount() == 0) {
-                    // totalAmount 값을 설정 (예시로 100으로 설정)
                     accrual.setTotalAmount(calculateTotalAccrual(accrual));
-//                }
             }
         }
         return accrualList;

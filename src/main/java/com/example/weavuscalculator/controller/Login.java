@@ -12,7 +12,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@CrossOrigin(origins = "https://vwcvd4.csb.app/")
 public class Login {
 
     @PostMapping("/login")

@@ -21,7 +21,16 @@ public class Accrual {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer monthlyAmount = 5000;
-    private Integer totalAmount;
+    private Long totalAmount;
+
+//    @PrePersist
+//    public void setStartDate() {
+//        if (employee != null && employee.getEmployeeType() == Employee.EmployeeType.REGULAR) {
+//            this.startDate = employee.getEntryDate();
+//            this.endDate = null; // endDate 초기화
+//            this.totalAmount = null; // totalAmount 초기화
+//        }
+//    }
+
 }
 
