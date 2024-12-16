@@ -1,10 +1,10 @@
-package com.example.weavuscalculator.controller;
+package com.weavusys.hrd.controller;
 
-import com.example.weavuscalculator.entity.Accrual;
-import com.example.weavuscalculator.entity.Employee;
-import com.example.weavuscalculator.repo.EmployeeRepository;
-import com.example.weavuscalculator.service.AccrualService;
-import com.example.weavuscalculator.service.EmployeeService;
+import com.weavusys.hrd.entity.Accrual;
+import com.weavusys.hrd.entity.Employee;
+import com.weavusys.hrd.repo.EmployeeRepository;
+import com.weavusys.hrd.service.AccrualService;
+import com.weavusys.hrd.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

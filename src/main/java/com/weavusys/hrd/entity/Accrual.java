@@ -1,4 +1,4 @@
-package com.example.weavuscalculator.entity;
+package com.weavusys.hrd.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,15 +22,6 @@ public class Accrual {
     private LocalDate startDate;
     private LocalDate endDate;
     private Long totalAmount;
-
-//    @PrePersist
-//    public void setStartDate() {
-//        if (employee != null && employee.getEmployeeType() == Employee.EmployeeType.REGULAR) {
-//            this.startDate = employee.getEntryDate();
-//            this.endDate = null; // endDate 초기화
-//            this.totalAmount = null; // totalAmount 초기화
-//        }
-//    }
 
 }
 

@@ -1,4 +1,4 @@
-package com.example.weavuscalculator.entity;
+package com.weavusys.hrd.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class Amount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer rank;  //직급 고유값
     private Integer monthlyAmount;
 }

@@ -1,10 +1,9 @@
-package com.example.weavuscalculator.service;
+package com.weavusys.hrd.service;
 
-import com.example.weavuscalculator.entity.Accrual;
-import com.example.weavuscalculator.entity.Employee;
-import com.example.weavuscalculator.repo.AccrualRepository;
-import com.example.weavuscalculator.repo.EmployeeRepository;
-import jakarta.persistence.PrePersist;
+import com.weavusys.hrd.entity.Accrual;
+import com.weavusys.hrd.entity.Employee;
+import com.weavusys.hrd.repo.AccrualRepository;
+import com.weavusys.hrd.repo.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

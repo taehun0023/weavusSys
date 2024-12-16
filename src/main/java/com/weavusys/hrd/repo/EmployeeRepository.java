@@ -1,6 +1,6 @@
-package com.example.weavuscalculator.repo;
+package com.weavusys.hrd.repo;
 
-import com.example.weavuscalculator.entity.Employee;
+import com.weavusys.hrd.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

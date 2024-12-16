@@ -1,4 +1,4 @@
-package com.example.weavuscalculator.controller;
+package com.weavusys.hrd.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Response;
