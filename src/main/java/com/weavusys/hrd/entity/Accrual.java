@@ -18,10 +18,11 @@ public class Accrual {
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
-
     private LocalDate startDate;
     private LocalDate endDate;
     private Long totalAmount;
+
+    private Integer state;
 
 }
 

@@ -1,8 +1,10 @@
 package com.weavusys.hrd.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.time.LocalDate;
 
@@ -12,22 +14,22 @@ import java.time.LocalDate;
 public class Employee {
 
     @Id
+    @Column(nullable = false)
     private String id;
-
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private LocalDate entryDate;
     private LocalDate exitDate;
-
     @Enumerated(EnumType.STRING)
     private EmployeeType employeeType;
-
     private LocalDate conversionDate;
+    @Column(nullable = false)
     private Integer rank; //직급 추가
+    private Integer status; //유저 활성화, 비활성화
 
     public enum EmployeeType {
         REGULAR, CONTRACT
-        //이넘 벨류랑 네임으로 넣기 -> DB는 value, 표시는 네임
-        //-> 서브 클래스가 아닌 따로 이넘을 클래스로따로 빼서 하는 경우가 많음
-        //따른 곳에서 이넘패키지로 빼기
     }
+
 }
