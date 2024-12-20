@@ -34,6 +34,7 @@ public class BatchAccrualService {
     }
 
     public void calculateTotalAccrual(String A) {
+        //테스트 코드 정리 전
 //        List<Accrual> accrualList = accrualRepository.findAll();
 //        MonthLog monthLog = new MonthLog();
 //        long monthTotal = 0;
@@ -118,13 +119,12 @@ public class BatchAccrualService {
         List<Accrual> accrualList = accrualRepository.findAll();
         MonthLog monthLog = new MonthLog();
         long monthTotal = 0;
+        LocalDate now = LocalDate.parse(A);
+        YearMonth nowMonth = YearMonth.from(now);
 
         for (Accrual accrual : accrualList) {
             Employee employee = accrual.getEmployee();
             Amount setPrice = settingsRepository.findByRank(employee.getRank());
-
-            LocalDate now = LocalDate.parse(A);
-            YearMonth nowMonth = YearMonth.from(now);
 
             LocalDate startDate = accrual.getStartDate() != null ? accrual.getStartDate() : now;
             YearMonth startMonth = YearMonth.from(startDate);
@@ -165,7 +165,18 @@ public class BatchAccrualService {
         }
 
         monthLog.setMonthlyTotal(monthTotal);
-        monthLog.setSaveDate(LocalDate.now());
+        monthLog.setSaveDate(now);
         monthLogRepository.save(monthLog);
+    }
+
+    public long calculateYearlyAccrualTotal(int year) {
+        long yearlyTotal = 0;
+        // 특정 연도의 모든 월로그 조회
+        List<MonthLog> monthLogs = monthLogRepository.findBySaveDateYear(year);
+        // 각 월별 퇴직금 총액 합산
+        for (MonthLog monthLog : monthLogs) {
+            yearlyTotal += monthLog.getMonthlyTotal();
+        }
+        return yearlyTotal;
     }
 }

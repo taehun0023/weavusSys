@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface AccrualRepository extends JpaRepository<Accrual, Long> {
     Optional<Accrual> findByEmployeeId(String id);
+
+    void deleteByEmployeeId(String id);
 }
 

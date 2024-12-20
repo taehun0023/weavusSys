@@ -46,19 +46,6 @@ public class EmployeeController {
         return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-//    @Operation(summary = "적립리스트 내역 조회", description = "모든직원의 적립내역을 조회합니다.")
-//    @GetMapping("/accruals")
-//    public List<Accrual> getAllEmployees() {
-//        return accrualService.findAll();
-//    }
-
-    @Operation(summary = "연도로 직원 검색", description = "입사일의 연도를 기준으로 직원 검색")
-    @GetMapping("/employees/byYear")
-    public List<Employee> findEmployeeByYear(
-            @Parameter(description = "검색할 연도") @RequestParam Integer year) {
-        return employeeService.findByEntryDateYear(year);
-    }
-
     @Operation(summary = "직원 등록", description = "새로운 직원을 등록합니다.")
     @PostMapping
     public String addEmployee(@RequestBody Employee employee) {
@@ -68,15 +55,11 @@ public class EmployeeController {
         return "다시 한번 입력해 주세요.";
     }
 
-//    @Operation(summary = "특정 직원의 적립 내역 조회", description = "특정 직원의 적립 내역을 조회합니다.")
-//    @GetMapping("/{id}/accrual")
-//    public String getAccrual(@Parameter(description = "직원의 ID") @PathVariable String id) {
-//        Accrual accrual = accrualService.findByEmployeeId(id).orElseThrow();
-//        String result = String.valueOf(accrualService.calculateTotalAccrual(accrual));
-//        return result;
-//    }
-
     @Operation(summary = "직원 정보 수정", description = "특정 직원의 정보를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "직원이 수정되었습니다."),
+            @ApiResponse(responseCode = "404", description = "다시 한번 확인해 주세요.")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Employee> modifyEmployee(@Parameter(description = "직원의 ID") @PathVariable String id, @RequestBody Employee employee) {
         Employee modifyEmployee = employeeService.modifyEmployee(id, employee);

@@ -54,4 +54,9 @@ public class AccrualController {
             return ResponseEntity.badRequest().body("다시 확인해주세요: " + e.getMessage());
         }
     }
+
+    @GetMapping ("/accruals/year/{year}")
+    public long getYearlyAccrualTotal(@PathVariable int year) {
+        return batchAccrualService.calculateYearlyAccrualTotal(year);
+    }
 }

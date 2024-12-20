@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,14 +28,26 @@ public class EmployeeService {
     }
 
     public boolean save(Employee employee) {
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = employee.getConversionDate() != null ? employee.getConversionDate() : now;
+        YearMonth startMonth = YearMonth.from(startDate);
+        LocalDate endDate = employee.getExitDate() != null ? employee.getExitDate() : now;
+        YearMonth endMonth = YearMonth.from(endDate);
+        long months = ChronoUnit.MONTHS.between(startMonth, endMonth);
+        int state = (months > 12) ? (endDate.getYear() < now.getYear() ? 2 : 1) : 0;
+
         if (employeeRepository.findById(employee.getId()).isEmpty()){
             try {
                 Accrual accrual = new Accrual();
                 employee.setStatus(0);
                 employeeRepository.save(employee);
                 accrual.setEmployee(employee);
+                accrual.setState(state);
                 if(employee.getEmployeeType().equals(Employee.EmployeeType.REGULAR)){
                     accrual.setStartDate(employee.getConversionDate());
+                }
+                if (employee.getExitDate() != null){
+                    accrual.setEndDate(employee.getExitDate());
                 }
                 accrualRepository.save(accrual);
                 return true;
