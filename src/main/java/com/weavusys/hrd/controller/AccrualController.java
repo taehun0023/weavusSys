@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-
 
 @RestController
 @RequestMapping("/api/employees")
@@ -44,14 +42,13 @@ public class AccrualController {
     }
 
     @PutMapping("/admin/setting")
-    public ResponseEntity<String> updateAmounts(@RequestBody List<Amount> amounts) {
+    public void updateAmounts(@RequestBody List<Amount> amounts) {
         try{
             for (Amount amount : amounts) {
                 accrualService.updateAmount(amount); // 각 항목을 처리
             }
-            return ResponseEntity.ok("수정 완료");
         }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body("다시 확인해주세요: " + e.getMessage());
+
         }
     }
 

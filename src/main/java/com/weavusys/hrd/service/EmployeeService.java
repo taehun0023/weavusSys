@@ -14,6 +14,7 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class EmployeeService {
         return employeeRepository.findByStatus(0);
     }
 
-    public boolean save(Employee employee) {
+    public String save(Employee employee) {
         LocalDate now = LocalDate.now();
         LocalDate startDate = employee.getConversionDate() != null ? employee.getConversionDate() : now;
         YearMonth startMonth = YearMonth.from(startDate);
@@ -38,9 +39,9 @@ public class EmployeeService {
 
         if (employeeRepository.findById(employee.getId()).isEmpty()){
             try {
-                Accrual accrual = new Accrual();
                 employee.setStatus(0);
                 employeeRepository.save(employee);
+                Accrual accrual = new Accrual();
                 accrual.setEmployee(employee);
                 accrual.setState(state);
                 if(employee.getEmployeeType().equals(Employee.EmployeeType.REGULAR)){
@@ -50,14 +51,14 @@ public class EmployeeService {
                     accrual.setEndDate(employee.getExitDate());
                 }
                 accrualRepository.save(accrual);
-                return true;
+                return "0";
             }catch (Exception e){
                 logger.error("저장 실패", e);
-                return false;
+                return "1";
             }
         }
         logger.error("아이디 중복");
-        return false;
+        return "2";
     }
 
     public Employee modifyEmployee(String id, Employee employee) {
@@ -79,6 +80,7 @@ public class EmployeeService {
     public boolean deleteById(String id) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         optionalEmployee.ifPresent(employee -> {
+//            employee.setId(id + "_notUsed");
             employee.setStatus(1);
             employeeRepository.save(employee);
         });

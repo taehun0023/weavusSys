@@ -19,6 +19,4 @@ public class SwaggerConfig {
                         .version("1")
                         .contact(new Contact().name("weavusys").email("")));
     }
-
-
 }

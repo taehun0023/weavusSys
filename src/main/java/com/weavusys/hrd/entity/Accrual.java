@@ -21,7 +21,6 @@ public class Accrual {
     private LocalDate startDate;
     private LocalDate endDate;
     private Long totalAmount;
-
     private Integer state;
 
 }

@@ -40,6 +40,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "200", description = "직원을 조회하였습니다."),
             @ApiResponse(responseCode = "404", description = "직원이 존재하지 않습니다.")
     })
+
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployee(@Parameter(description = "직원의 ID") @PathVariable String id) {
         Optional<Employee> employee = employeeRepository.findById(id);
@@ -49,10 +50,14 @@ public class EmployeeController {
     @Operation(summary = "직원 등록", description = "새로운 직원을 등록합니다.")
     @PostMapping
     public String addEmployee(@RequestBody Employee employee) {
-        if (employeeService.save(employee)) {
+        String result = employeeService.save(employee);
+        if (result.equals("0")) {
             return "등록이 완료되었습니다.";
+        } else if (result.equals("1")) {
+            return "다시 한번 입력해 주세요.";
+        }else {
+            return "아이디가 중복입니다.";
         }
-        return "다시 한번 입력해 주세요.";
     }
 
     @Operation(summary = "직원 정보 수정", description = "특정 직원의 정보를 수정합니다.")
