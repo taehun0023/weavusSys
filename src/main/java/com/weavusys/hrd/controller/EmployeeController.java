@@ -1,6 +1,5 @@
 package com.weavusys.hrd.controller;
 
-import com.weavusys.hrd.entity.Accrual;
 import com.weavusys.hrd.entity.Employee;
 import com.weavusys.hrd.repo.EmployeeRepository;
 import com.weavusys.hrd.service.AccrualService;
@@ -14,10 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Tag(name = "1.Employee", description = "Employee management API")
 @RequiredArgsConstructor

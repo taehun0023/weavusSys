@@ -5,7 +5,6 @@ import com.weavusys.hrd.entity.Amount;
 import com.weavusys.hrd.service.AccrualService;
 import com.weavusys.hrd.calCulBatch.BatchAccrualService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

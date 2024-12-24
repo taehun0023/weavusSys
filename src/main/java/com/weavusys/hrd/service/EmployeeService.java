@@ -14,7 +14,6 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -80,30 +79,9 @@ public class EmployeeService {
     public boolean deleteById(String id) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         optionalEmployee.ifPresent(employee -> {
-//            employee.setId(id + "_notUsed");
             employee.setStatus(1);
             employeeRepository.save(employee);
         });
         return optionalEmployee.isPresent();
     }
-
-    public List<Employee> findByEntryDateYear(Integer year) {
-        return employeeRepository.findByEntryDateYear(year);
-    }
-
-
-
-//    public boolean save(Employee employee) {
-//        employeeRepository.save(employee);
-//        Employee savedEmployee = employeeRepository.findById(employee.getId()).orElseThrow(() -> new RuntimeException("Employee not found"));
-//        Accrual accrual = new Accrual();
-//        accrual.setEmployee(savedEmployee);
-//            if (savedEmployee.getEmployeeType() == Employee.EmployeeType.REGULAR) {
-//               accrual.setStartDate(savedEmployee.getConversionDate());
-//            }
-//            accrualRepository.save(accrual);
-//
-//            return true;
-//    }
-
 }

@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://vwcvd4.csb.app"); // 필요한 도메인 추가
+        configuration.addAllowedOrigin("https://jsh95.github.io"); // 필요한 도메인 추가
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
