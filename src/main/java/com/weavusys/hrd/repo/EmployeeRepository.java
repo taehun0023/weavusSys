@@ -12,10 +12,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByStatus(int i);
 
     Optional<Employee> findById(String id);
-
-    @Query("SELECT e FROM Employee e " +
-            "WHERE FUNCTION('YEAR', e.entryDate) <= :year " +
-            "AND (e.exitDate IS NULL OR FUNCTION('YEAR', e.exitDate) >= :year)")
-    List<Employee> findByEntryDateYear(Integer year);
 }
 

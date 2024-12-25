@@ -29,25 +29,19 @@ public class BatchAccrualService {
 
     @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정 실행
     public void scheduleBatchAccrual() {
-        String A = null;
-        calculateTotalAccrual(A);
+        calculateTotalAccrual();
     }
-
-    public void calculateTotalAccrual(String A) {
+    public void calculateTotalAccrual() {
 
         List<Accrual> accrualList = accrualRepository.findAll();
-        LocalDate now ;
-        if(A != null){
-             now = LocalDate.parse(A);
-        } else {
-             now = LocalDate.now();
-        }
+        LocalDate now = LocalDate.now();
         YearMonth nowMonth = YearMonth.from(now);
         MonthLog monthLog = new MonthLog();
         long monthTotal = 0;
 
 
         for (Accrual accrual : accrualList) {
+            //직급 별로 월 적립금 금액 취득
             Employee employee = accrual.getEmployee();
             Amount setPrice = settingsRepository.findByRank(employee.getRank());
 
@@ -58,7 +52,17 @@ public class BatchAccrualService {
             YearMonth endMonth = YearMonth.from(endDate);
 
             long months = ChronoUnit.MONTHS.between(startMonth, endMonth);
-            int state = (months > 12) ? (endDate.getYear() < now.getYear() ? 2 : 1) : 0;
+            //퇴직금 지급 가능 여부 판단
+            int state;
+            if (months > 12) {
+                if (endDate.getYear() < now.getYear()) {
+                    state = 2;
+                } else {
+                    state = 1;
+                }
+            } else {
+                state = 0;
+            }
             accrual.setState(state);
 
             if (!employee.getEmployeeType().equals(Employee.EmployeeType.CONTRACT)) {

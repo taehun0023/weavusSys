@@ -35,7 +35,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://jsh95.github.io"); // 필요한 도메인 추가
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://jsh95.github.io", // 배포 중 화면 도메인
+                "http://localhost:3000" // 로컬 테스트 도메인
+        ));
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
