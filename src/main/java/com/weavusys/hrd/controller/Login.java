@@ -34,14 +34,14 @@ public class Login {
                     String token = jwtTokenProvider.generateToken(authentication);
 
                     Map<String, Object> response = new HashMap<>();
-                    response.put("message", "슈퍼 계정 로그인 성공");
+                    response.put("message", "관리자 계정 로그인 성공");
                     response.put("token", token);
                     response.put("success", true);
 
                     return ResponseEntity.ok(response);
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body(Map.of("message", "슈퍼 계정의 아이디 또는 비밀번호가 올바르지 않습니다."));
+                            .body(Map.of("message", "관리자 계정의 아이디 또는 비밀번호가 올바르지 않습니다."));
                 }
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

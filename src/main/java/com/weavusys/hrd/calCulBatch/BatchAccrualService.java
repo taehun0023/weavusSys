@@ -29,10 +29,8 @@ public class BatchAccrualService {
 
     @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정 실행
     public void scheduleBatchAccrual() {
-        String A = null;
-        calculateTotalAccrual(A);
+        calculateTotalAccrual(null);
     }
-
     public void calculateTotalAccrual(String A) {
 
         List<Accrual> accrualList = accrualRepository.findAll();

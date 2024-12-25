@@ -1,9 +1,13 @@
 package com.weavusys.hrd.service;
 
 import com.weavusys.hrd.entity.Accrual;
+import com.weavusys.hrd.entity.Amount;
 import com.weavusys.hrd.entity.Employee;
+import com.weavusys.hrd.entity.MonthLog;
 import com.weavusys.hrd.repo.AccrualRepository;
 import com.weavusys.hrd.repo.EmployeeRepository;
+import com.weavusys.hrd.repo.MonthLogRepository;
+import com.weavusys.hrd.repo.SettingsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -22,6 +26,8 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final AccrualRepository accrualRepository;
     private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
+    private final SettingsRepository settingsRepository;
+    private final MonthLogRepository monthLogRepository;
 
     public List<Employee> findAll() {
         return employeeRepository.findByStatus(0);
@@ -29,11 +35,19 @@ public class EmployeeService {
 
     public String save(Employee employee) {
         LocalDate now = LocalDate.now();
+        YearMonth nowMonth = YearMonth.from(now);
+
         LocalDate startDate = employee.getConversionDate() != null ? employee.getConversionDate() : now;
         YearMonth startMonth = YearMonth.from(startDate);
+
         LocalDate endDate = employee.getExitDate() != null ? employee.getExitDate() : now;
         YearMonth endMonth = YearMonth.from(endDate);
+
         long months = ChronoUnit.MONTHS.between(startMonth, endMonth);
+        Amount setPrice = settingsRepository.findByRank(employee.getRank());
+        MonthLog monthLog = new MonthLog();
+        long monthTotal = 0;
+
         int state = (months > 12) ? (endDate.getYear() < now.getYear() ? 2 : 1) : 0;
 
         if (employeeRepository.findById(employee.getId()).isEmpty()){
@@ -43,12 +57,33 @@ public class EmployeeService {
                 Accrual accrual = new Accrual();
                 accrual.setEmployee(employee);
                 accrual.setState(state);
+
+                // 기존 정직원 초기 등록 적립금 계산
                 if(employee.getEmployeeType().equals(Employee.EmployeeType.REGULAR)){
-                    accrual.setStartDate(employee.getConversionDate());
+
+                    long resultFirst = 0;
+
+                    if(startMonth.equals(endMonth)){
+
+                    }else {
+                        long totalMonths = endMonth.isAfter(nowMonth)
+                                ? ChronoUnit.MONTHS.between(startMonth, nowMonth) + 1
+                                : ChronoUnit.MONTHS.between(startMonth, endMonth) + 1;
+                        resultFirst = totalMonths * setPrice.getMonthlyAmount();
+                        monthTotal += resultFirst;
+                    }
+
+                    // 초기 등록 적립금 설정
+                    accrual.setTotalAmount(resultFirst);
+                    monthLog.setMonthlyTotal(monthTotal);
+                    monthLog.setSaveDate(now);
+                    monthLogRepository.save(monthLog);
                 }
+
                 if (employee.getExitDate() != null){
                     accrual.setEndDate(employee.getExitDate());
                 }
+                accrual.setStartDate(startDate);
                 accrualRepository.save(accrual);
                 return "0";
             }catch (Exception e){
