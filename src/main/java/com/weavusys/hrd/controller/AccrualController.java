@@ -29,11 +29,6 @@ public class AccrualController {
         return accrual;
     }
 
-    @GetMapping("/weavus12345/admintesturl")
-    public void Test(@RequestParam String A) {
-        batchAccrualService.calculateTotalAccrual(A);
-    }
-
     @GetMapping("/admin/setting")
     public List<Amount> GetAdminSetting() {
         List<Amount> amountList = accrualService.findAllAmount();

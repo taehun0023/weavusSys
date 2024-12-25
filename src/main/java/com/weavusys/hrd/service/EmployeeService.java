@@ -34,6 +34,8 @@ public class EmployeeService {
     }
 
     public String save(Employee employee) {
+
+        //직원 등록 시 초기 퇴직금 계산용 날짜 계산 변수
         LocalDate now = LocalDate.now();
         YearMonth nowMonth = YearMonth.from(now);
 
@@ -48,9 +50,19 @@ public class EmployeeService {
         MonthLog monthLog = new MonthLog();
         long monthTotal = 0;
 
-        int state = (months > 12) ? (endDate.getYear() < now.getYear() ? 2 : 1) : 0;
+        int state;
+        if (months > 12) {
+            if (endDate.getYear() < now.getYear()) {
+                state = 2;
+            } else {
+                state = 1;
+            }
+        } else {
+            state = 0;
+        }
 
-        if (employeeRepository.findById(employee.getId()).isEmpty()){
+        Optional<Employee> id = employeeRepository.findById(employee.getId());
+        if (id.isEmpty()){
             try {
                 employee.setStatus(0);
                 employeeRepository.save(employee);
@@ -61,11 +73,8 @@ public class EmployeeService {
                 // 기존 정직원 초기 등록 적립금 계산
                 if(employee.getEmployeeType().equals(Employee.EmployeeType.REGULAR)){
 
-                    long resultFirst = 0;
-
-                    if(startMonth.equals(endMonth)){
-
-                    }else {
+                    long resultFirst = 0; //최초 계산
+                    if(!startMonth.equals(endMonth)){
                         long totalMonths = endMonth.isAfter(nowMonth)
                                 ? ChronoUnit.MONTHS.between(startMonth, nowMonth) + 1
                                 : ChronoUnit.MONTHS.between(startMonth, endMonth) + 1;
@@ -83,10 +92,11 @@ public class EmployeeService {
                 if (employee.getExitDate() != null){
                     accrual.setEndDate(employee.getExitDate());
                 }
+
                 accrual.setStartDate(startDate);
                 accrualRepository.save(accrual);
                 return "0";
-            }catch (Exception e){
+            } catch (Exception e){
                 logger.error("저장 실패", e);
                 return "1";
             }
