@@ -50,19 +50,12 @@ public class EmployeeService {
         MonthLog monthLog = new MonthLog();
         long monthTotal = 0;
 
-        int state;
-        if (months > 12) {
-            if (endDate.getYear() < now.getYear()) {
-                state = 2;
-            } else {
-                state = 1;
-            }
-        } else {
-            state = 0;
-        }
+        int state = (months > 12) ? (endDate.getYear() < now.getYear() ? 2 : 1) : 0;
+        // month 12개월 이하 시 0 값을 state에 부여,
+        // month 12개월 초과 시 now와 endDate를 비교하여 2, 1값 을 state에 부여
 
-        Optional<Employee> id = employeeRepository.findById(employee.getId());
-        if (id.isEmpty()){
+        Optional<Employee> employeeDto = employeeRepository.findById(employee.getId());
+        if (employeeDto.isEmpty()){ //변수명 불명확하여 변경
             try {
                 employee.setStatus(0);
                 employeeRepository.save(employee);
@@ -73,7 +66,7 @@ public class EmployeeService {
                 // 기존 정직원 초기 등록 적립금 계산
                 if(employee.getEmployeeType().equals(Employee.EmployeeType.REGULAR)){
 
-                    long resultFirst = 0; //최초 계산
+                    long resultFirst = 0; //직원 등록 시 적립금 최초 계산값 저장 변수
                     if(!startMonth.equals(endMonth)){
                         long totalMonths = endMonth.isAfter(nowMonth)
                                 ? ChronoUnit.MONTHS.between(startMonth, nowMonth) + 1
@@ -81,9 +74,9 @@ public class EmployeeService {
                         resultFirst = totalMonths * setPrice.getMonthlyAmount();
                         monthTotal += resultFirst;
                     }
-
-                    // 초기 등록 적립금 설정
                     accrual.setTotalAmount(resultFirst);
+
+                    // 초기 등록시 적립된 금액 로그 저장
                     monthLog.setMonthlyTotal(monthTotal);
                     monthLog.setSaveDate(now);
                     monthLogRepository.save(monthLog);
@@ -95,14 +88,12 @@ public class EmployeeService {
 
                 accrual.setStartDate(startDate);
                 accrualRepository.save(accrual);
-                return "0";
+                return "등록이 완료되었습니다."; //저장 성공 여부 바로 메세지 발송으로 변경
             } catch (Exception e){
-                logger.error("저장 실패", e);
-                return "1";
+                return "다시 한번 입력해 주세요.";
             }
         }
-        logger.error("아이디 중복");
-        return "2";
+        return "아이디가 중복입니다.";
     }
 
     public Employee modifyEmployee(String id, Employee employee) {
