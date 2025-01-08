@@ -18,7 +18,7 @@ public class AccrualService {
     private final SettingsRepository settingsRepository;
 
     public Optional<Accrual> findByEmployeeId(String id) {
-        Optional<Accrual> accrual = accrualRepository.findByEmployeeId(id);
+        Optional<Accrual> accrual = Optional.ofNullable(accrualRepository.findByEmployeeId(id));
         return accrual;
     }
 

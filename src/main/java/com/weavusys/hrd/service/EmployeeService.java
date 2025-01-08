@@ -10,8 +10,6 @@ import com.weavusys.hrd.repo.MonthLogRepository;
 import com.weavusys.hrd.repo.SettingsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -25,7 +23,6 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final AccrualRepository accrualRepository;
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
     private final SettingsRepository settingsRepository;
     private final MonthLogRepository monthLogRepository;
 
@@ -33,7 +30,22 @@ public class EmployeeService {
         return employeeRepository.findByStatus(0);
     }
 
+    // 퇴사일이 입사일, 전환일보다 빠를 경우 퇴직금 계산 방지
+    private String validateExitDate(Employee employee) {
+        if (employee.getExitDate() != null) {
+            if (employee.getExitDate().isBefore(employee.getEntryDate()) ||
+                    (employee.getConversionDate() != null && employee.getExitDate().isBefore(employee.getConversionDate()))) {
+                return "퇴사일은 입사일, 전환일 이후여야 합니다.";
+            }
+        }
+        return null;
+    }
+
     public String save(Employee employee) {
+        String validationMessage = validateExitDate(employee);
+        if (validationMessage != null) {
+            return validationMessage;
+        }
 
         //직원 등록 시 초기 퇴직금 계산용 날짜 계산 변수
         LocalDate now = LocalDate.now();
@@ -75,6 +87,7 @@ public class EmployeeService {
                         monthTotal += resultFirst;
                     }
                     accrual.setTotalAmount(resultFirst);
+                    accrual.setStartDate(startDate); //전환일 accual startdate지정
 
                     // 초기 등록시 적립된 금액 로그 저장
                     monthLog.setMonthlyTotal(monthTotal);
@@ -86,7 +99,6 @@ public class EmployeeService {
                     accrual.setEndDate(employee.getExitDate());
                 }
 
-                accrual.setStartDate(startDate);
                 accrualRepository.save(accrual);
                 return "등록이 완료되었습니다."; //저장 성공 여부 바로 메세지 발송으로 변경
             } catch (Exception e){
@@ -97,6 +109,12 @@ public class EmployeeService {
     }
 
     public Employee modifyEmployee(String id, Employee employee) {
+        //퇴사일이 전환일보다 빠를 경우 수정 취소
+        String validationMessage = validateExitDate(employee);
+        if (validationMessage != null) {
+            return null;
+        }
+
         Optional<Employee> existingEmployee = employeeRepository.findById(id);
         if (existingEmployee.isPresent()) {
             Employee user = existingEmployee.get();
@@ -107,6 +125,16 @@ public class EmployeeService {
             user.setEmployeeType(employee.getEmployeeType());
             user.setConversionDate(employee.getConversionDate());
             user.setRank(employee.getRank());
+
+            // 퇴직금 테이블 정보도 같이 수정
+            Accrual accrual = accrualRepository.findByEmployeeId(employee.getId());
+            if(employee.getExitDate() != null){ //퇴직일이 있으면 accrual EndDate를 user의 ExitDate날짜로 설정
+                accrual.setEndDate(user.getExitDate());
+            }
+
+            accrual.setStartDate(user.getConversionDate() != null ? user.getConversionDate() : LocalDate.now());
+            accrualRepository.save(accrual);
+
             return employeeRepository.save(user);
         }
         return null;
@@ -115,7 +143,16 @@ public class EmployeeService {
     public boolean deleteById(String id) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         optionalEmployee.ifPresent(employee -> {
-            employee.setStatus(1);
+            employee.setStatus(1); //직원 상태 1 : 미사용, 0 : 사용중
+            //삭제 시 퇴직금 테이블 정보도 같이 수정
+            if(employee.getExitDate() == null){ //퇴직일이 없으면 accrual, emploeey EndDate를 당일 날짜로 설정
+                employee.setExitDate(LocalDate.now());
+                Accrual accrual = accrualRepository.findByEmployeeId(employee.getId());
+                if (accrual != null) {
+                    accrual.setEndDate(LocalDate.now());
+                    accrualRepository.save(accrual);
+                }
+            }
             employeeRepository.save(employee);
         });
         return optionalEmployee.isPresent();
