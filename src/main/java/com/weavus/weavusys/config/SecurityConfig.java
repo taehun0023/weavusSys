@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/login").permitAll()
+//                        .requestMatchers("/api/signup").permitAll() //초기 관리자 계정 추가 용도
                         .requestMatchers("/swagger-ui/**").permitAll()  // 이 줄 추가
                         .requestMatchers("/v3/api-docs/**").permitAll()  // Swagger API 예외
                         .requestMatchers("/weavusys").permitAll()

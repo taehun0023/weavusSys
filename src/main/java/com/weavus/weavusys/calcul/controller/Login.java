@@ -1,5 +1,6 @@
 package com.weavus.weavusys.calcul.controller;
 
+import com.weavus.weavusys.calcul.service.CustomUserDetailsService;
 import com.weavus.weavusys.config.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class Login {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomUserDetailsService customUserDetailsService;
 
         @PostMapping("/login")
         public ResponseEntity<?> login (@RequestBody Map < String, String > superAccount){
@@ -49,4 +51,18 @@ public class Login {
                         .body(Map.of("message", "로그인 실패: " + e.getMessage()));
             }
         }
+
+    //어드민 계정 추가 메소드
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody Map<String, String> superAccount) {
+            customUserDetailsService.registerUser(
+                superAccount.get("username"),
+                superAccount.get("password")
+        );
+         return ResponseEntity.ok(Map.of("message", "관리자 계정 회원가입 성공"));
+    }
+
+
+
+
 }
