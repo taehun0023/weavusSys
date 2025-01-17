@@ -39,4 +39,16 @@ public class ApplicantController {
     public String deleteApplicant(@PathVariable Long id) {
         return applicantService.deleteApplicant(id);
     }
+
+    //지원자 이력서 djqfhem
+//    @PostMapping("/applicant/{id}/upload")
+//    public String uploadResume(@PathVariable Long id, @RequestParam("resume") MultipartFile multipartFile) {
+//        return applicantService.uploadResume(id, multipartFile);
+//    }
+//
+//    //지원자 이력서 다운로드
+//    @GetMapping("/applicant/{id}/download")
+//    public ResponseEntity<Resource> downloadResume(@PathVariable Long id) {
+//        return applicantService.downloadResume(id);
+//    }
 }

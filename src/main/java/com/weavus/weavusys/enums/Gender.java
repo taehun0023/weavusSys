@@ -1,13 +1,11 @@
 package com.weavus.weavusys.enums;
 
-public enum OfferStatus {
-    대기중(0),
-    내정(1),
-    내정취소(2);
-
+public enum Gender {
+    남성(0),
+    여성(1);
     private final int value;
 
-    OfferStatus(int value) {
+    Gender(int value) {
         this.value = value;
     }
 
@@ -15,8 +13,8 @@ public enum OfferStatus {
         return value;
     }
 
-    public static OfferStatus fromValue(int value) {
-        for (OfferStatus status : OfferStatus.values()) {
+    public static Gender fromValue(int value) {
+        for (Gender status : Gender.values()) {
             if (status.getValue() == value) {
                 return status;
             }

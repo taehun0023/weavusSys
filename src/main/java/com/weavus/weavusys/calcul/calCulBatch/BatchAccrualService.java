@@ -5,6 +5,7 @@ import com.weavus.weavusys.calcul.entity.Amount;
 import com.weavus.weavusys.calcul.entity.Employee;
 import com.weavus.weavusys.calcul.entity.MonthLog;
 import com.weavus.weavusys.calcul.repo.AccrualRepository;
+import com.weavus.weavusys.calcul.repo.EmployeeRepository;
 import com.weavus.weavusys.calcul.repo.MonthLogRepository;
 import com.weavus.weavusys.calcul.repo.SettingsRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class BatchAccrualService {
     private final AccrualRepository accrualRepository;
     private final SettingsRepository settingsRepository;
     private final MonthLogRepository monthLogRepository;
+
+    private final EmployeeRepository employeeRepository;
 
     @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정 calculateTotalAccrual실행
 
@@ -98,12 +101,33 @@ public class BatchAccrualService {
 
     public long calculateYearlyAccrualTotal(int year) {
         long yearlyTotal = 0;
-        // 특정 연도의 모든 월로그 조회
+        LocalDate endDate = LocalDate.of(year, 12, 31); // 해당 연도의 마지막 날
+
         List<MonthLog> monthLogs = monthLogRepository.findBySaveDateYear(year);
-        // 각 월별 퇴직금 총액 합산
-        for (MonthLog monthLog : monthLogs) {
-            yearlyTotal += monthLog.getMonthlyTotal();
+        if (!monthLogs.isEmpty()) {
+            // MonthLog에 데이터가 있는 경우, 해당 데이터로 계산
+            for (MonthLog monthLog : monthLogs) {
+                yearlyTotal += monthLog.getMonthlyTotal();
+            }
+        } else {
+            // MonthLog에 데이터가 없는 경우, 기존 로직으로 계산
+            List<Employee> regularEmployees = employeeRepository.findByIsRegularTrueAndPromotionDateBeforeOrEqualTo(endDate);
+
+            for (Employee employee : regularEmployees) {
+                Amount setPrice = settingsRepository.findByRank(employee.getRank());
+                LocalDate promotionDate = employee.getConversionDate(); // 정직원 전환일
+
+                // 정직원 전환일 이후 퇴직금 계산
+                if (promotionDate.isBefore(endDate) || promotionDate.isEqual(endDate)) {
+                    // 전환일부터 해당 연도까지의 개월 수 계산
+                    long monthsBetween = ChronoUnit.MONTHS.between(promotionDate.withDayOfMonth(1), endDate.withDayOfMonth(1));
+
+                    yearlyTotal += monthsBetween * setPrice.getMonthlyAmount();
+                }
+            }
         }
+
         return yearlyTotal;
+
     }
 }

@@ -1,9 +1,15 @@
 package com.weavus.weavusys.enums;
 
 public enum AdmissionStatus {
-   대기중(0),
-    합격(1),
-    불합격(2);
+   지원중(0),
+    일차합격(1),
+    이차합격(2),
+    내정중(3),
+    내정확정(4),
+    합격(5),
+    불합격(6);
+
+
 
    private final int value;
 

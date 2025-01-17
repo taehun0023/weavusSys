@@ -4,9 +4,9 @@ package com.weavus.weavusys.personnel.service;
 import com.weavus.weavusys.personnel.dto.InstitutionDTO;
 import com.weavus.weavusys.personnel.dto.InstitutionDetailsDTO;
 import com.weavus.weavusys.personnel.dto.ScheduleDTO;
-import com.weavus.weavusys.personnel.entity.Applicant;
 import com.weavus.weavusys.personnel.entity.Institution;
 import com.weavus.weavusys.personnel.entity.Schedule;
+import com.weavus.weavusys.personnel.repository.ApplicantRepository;
 import com.weavus.weavusys.personnel.repository.InstitutionRepository;
 import com.weavus.weavusys.personnel.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ApplicantRepository applicantRepository;
 
     public List<InstitutionDTO> getAllInstitutions() {
         return institutionRepository.findAll().stream()
@@ -41,8 +42,9 @@ public class InstitutionService {
         dto.setName(institution.getName());
         dto.setContactInfo(institution.getContactInfo());
         dto.setApplicantNames(
-                institution.getApplicants() != null
-                        ? institution.getApplicants().stream().map(Applicant::getName).collect(Collectors.toList())
+//                institution.getApplicants() != null
+                applicantRepository.findByInstitutionId(id) != null
+                        ? applicantRepository.findByInstitutionId(id).stream().map(applicant -> applicant.getName()).collect(Collectors.toList())
                         : List.of()
         );
 
