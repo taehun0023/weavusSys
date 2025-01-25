@@ -3,7 +3,7 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ./severance # 백엔드 프로젝트 경로
+      context: ./weavusys-backend # 백엔드 프로젝트 경로
       dockerfile: Dockerfile
     ports:
       - "8080:8080" # 백엔드 포트
@@ -16,7 +16,7 @@ services:
 
   frontend:
     build:
-      context: ./JSH95.github.io # 프론트엔드 프로젝트 경로
+      context: ./weavusys-frontend # 프론트엔드 프로젝트 경로
       dockerfile: Dockerfile
     ports:
       - "3000:80" # 프론트엔드 포트
