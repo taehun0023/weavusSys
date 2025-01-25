@@ -8,9 +8,14 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17) // Java 17로 컴파일
+    }
+}
+
+jar {
+    archiveFileName = 'SEVERANCE.jar' // JAR 파일 이름 설정
+    destinationDirectory = file("$buildDir/libs") // 생성 위치 설정
 }
 
 configurations {

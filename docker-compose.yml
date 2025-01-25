@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./severance # 백엔드 프로젝트 경로
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # 백엔드 포트
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://svc.sel4.cloudtype.app:32107/testdata
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: weavus2024
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./JSH95.github.io # 프론트엔드 프로젝트 경로
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # 프론트엔드 포트
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:8080 # 백엔드 API URL
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
