@@ -14,7 +14,7 @@ java {
 }
 
 jar {
-    archiveFileName = 'SEVERANCE.jar' // JAR 파일 이름 설정
+    archiveFileName = 'weavusys-backend.jar' // JAR 파일 이름 설정
     destinationDirectory = file("$buildDir/libs") // 생성 위치 설정
 }
 
