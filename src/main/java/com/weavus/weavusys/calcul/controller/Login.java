@@ -29,6 +29,7 @@ public class Login {
         public ResponseEntity<?> login (@RequestBody Map < String, String > superAccount){
             String username = superAccount.get("username");
             String password = superAccount.get("password");
+            System.out.println("username" + username);
             try {
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(username, password)

@@ -95,7 +95,7 @@ public class InstitutionService {
     }
 
     //스케줄 수정
-    public ResponseEntity updateSchedule(Long scheduleId, ScheduleDTO scheduleDTO) {
+    public ResponseEntity<String> updateSchedule(Long scheduleId, ScheduleDTO scheduleDTO) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
 
