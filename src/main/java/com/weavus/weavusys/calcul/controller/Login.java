@@ -3,6 +3,9 @@ package com.weavus.weavusys.calcul.controller;
 import com.weavus.weavusys.calcul.service.CustomUserDetailsService;
 import com.weavus.weavusys.config.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,12 +27,12 @@ public class Login {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
-
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(Login.class);
         @PostMapping("/login")
         public ResponseEntity<?> login (@RequestBody Map < String, String > superAccount){
             String username = superAccount.get("username");
             String password = superAccount.get("password");
-            System.out.println("username" + username);
+            logger.info("username" + username);
             try {
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(username, password)
